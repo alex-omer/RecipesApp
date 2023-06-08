@@ -1,0 +1,193 @@
+﻿@model LexisNexisTakeHomeTest.Models.Recipe
+@using LexisNexisTakeHomeTest.Models
+
+@{
+    // Set the title of the view
+    ViewData["Title"] = ViewBag.Title;
+}
+
+<!-- Heading -->
+<h1>@ViewBag.Title</h1>
+
+<!-- Form for creating or editing a recipe -->
+<form asp-action="CreateEdit" method="post" enctype="multipart/form-data">
+    <div class="row">
+
+        <!-- Recipe details column -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+
+                    <!-- Hidden field for the recipe ID -->
+                    <input type="hidden" asp-for="Id" />
+
+                    <!-- Field for the recipe title -->
+                    <div class="form-group mb-2">
+                        <label asp-for="Title"></label>
+                        <input asp-for="Title" class="form-control" />
+                    </div>
+
+                    <!-- Field for the recipe description -->
+                    <div class="form-group mb-2">
+                        <label asp-for="Description"></label>
+                        <textarea asp-for="Description" class="form-control"></textarea>
+                    </div>
+
+                    <!-- Field for the recipe image -->
+                    <div class="form-group mb-2">
+                        <label asp-for="Image">Upload Image</label>
+                        <input asp-for="Image" type="file" accept="image/*" class="form-control" />
+                    </div>
+
+                    <!-- Display the current recipe image, if it exists -->
+                    <div class="form-group" id="current-image-container">
+                        @if (Model.Image != null)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Image)" alt="Recipe Image" class="img-thumbnail mb-3" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ingredients and instructions column -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+
+                    <!-- List of current ingredients -->
+                    <div class="form-group">
+                        <label>Ingredients</label>
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Ingredient Name</th>
+                                    <th scope="col"></th> <!-- Delete button column -->
+                                </tr>
+                            </thead>
+                            <tbody id="ingredientsTable">
+                                @for (var i = 0; i < Model.Ingredients.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            <!-- Hidden field for the ingredient ID -->
+                                            <input type="hidden" asp-for="@Model.Ingredients[i].Id" />
+
+                                            <!-- Field for the ingredient amount -->
+                                            <input asp-for="@Model.Ingredients[i].Amount" class="form-control" placeholder="Amount" />
+                                        </td>
+                                        <td>
+                                            <!-- Field for the ingredient name -->
+                                            <input asp-for="@Model.Ingredients[i].Name" class="form-control" placeholder="Ingredient name" />
+                                        </td>
+                                        <td>
+                                            <!-- Button to delete the ingredient -->
+                                            <button type="button" class="btn btn-danger delete-ingredient">Delete</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Fields to add a new ingredient -->
+                    <div class="form-group">
+                        <label>Add New Ingredient</label>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <!-- Field for the new ingredient amount -->
+                                        <input id="newIngredientAmount" type="text" class="form-control" placeholder="Amount" />
+                                    </td>
+                                    <td>
+                                        <!-- Field for the new ingredient name -->
+                                        <input id="newIngredientName" type="text" class="form-control" placeholder="Ingredient name" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <!-- Button to add the new ingredient -->
+                                        <button id="addIngredientBtn" type="button" class="btn btn-primary">Add Ingredient</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- List of current instructions -->
+                    <div class="form-group">
+                        <label>Instructions</label>
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Step</th>
+                                    <th scope="col">Instruction Description</th>
+                                    <th scope="col"></th> <!-- Delete button column -->
+                                </tr>
+                            </thead>
+                            <tbody id="instructionsTable">
+                                @for (var i = 0; i < Model.Instructions.Count; i++)
+                                {
+                                    <tr draggable="true">
+                                        <td>
+                                            <!-- Hidden field for the instruction ID -->
+                                            <input type="hidden" asp-for="@Model.Instructions[i].Id" />
+
+                                            <!-- Hidden field for the instruction step number -->
+                                            <input type="hidden" asp-for="@Model.Instructions[i].StepNumber" />
+
+                                            <!-- Display the step number -->
+                                            <span class="step-number">@Model.Instructions[i].StepNumber</span>
+                                        </td>
+                                        <td>
+                                            <!-- Field for the instruction description -->
+                                            <textarea asp-for="@Model.Instructions[i].Description" class="form-control" placeholder="Instruction description"></textarea>
+                                        </td>
+                                        <td>
+                                            <!-- Button to delete the instruction -->
+                                            <button type="button" class="btn btn-danger delete-instruction">Delete</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Field to add a new instruction -->
+                    <div class="form-group">
+                        <label>Add New Instruction</label>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <!-- Field for the new instruction description -->
+                                        <textarea id="newInstructionDescription" class="form-control" placeholder="Instruction description"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <!-- Button to add the new instruction -->
+                                        <button id="addInstructionBtn" type="button" class="btn btn-primary">Add Instruction</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save and Cancel buttons -->
+    <div class="d-flex justify-content-center mt-3">
+        <button type="submit" class="btn btn-success btn-lg me-2 uniform-width">Save</button>
+        <a asp-action="Index" class="btn btn-secondary btn-lg ms-2 uniform-width">Cancel</a>
+    </div>
+</form>
+
+<!-- JavaScript for creating and editing recipes -->
+@section Scripts {
+    <script src="~/js/recipeCreateEdit.js"></script>
+}

@@ -1,0 +1,30 @@
+﻿@model LexisNexisTakeHomeTest.Models.Recipe
+
+@{
+    ViewData["Title"] = "Recipe Details";
+}
+
+<h1>@Model.Title</h1>
+
+<p>@Model.Description</p>
+
+@if (Model.Image != null)
+{
+    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Image)" alt="@Model.Title" class="img-fluid recipe-image" />
+}
+
+<h2>Ingredients</h2>
+<ul>
+    @foreach (var ingredient in Model.Ingredients)
+    {
+        <li>@ingredient.Amount @ingredient.Name</li>
+    }
+</ul>
+
+<h2>Instructions</h2>
+<ol>
+    @foreach (var instruction in Model.Instructions.OrderBy(i => i.StepNumber))
+    {
+        <li>@instruction.Description</li>
+    }
+</ol>

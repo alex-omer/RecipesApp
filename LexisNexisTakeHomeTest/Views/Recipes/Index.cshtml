@@ -1,0 +1,44 @@
+﻿@model IEnumerable<LexisNexisTakeHomeTest.Models.Recipe>
+
+@{
+    ViewData["Title"] = "Recipes";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Recipe</a>
+</p>
+
+<div class="form-group">
+    <input type="text" class="form-control" id="searchInput" placeholder="Search recipes...">
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var recipe in Model)
+        {
+            <tr>
+                <td>@recipe.Title</td>
+                <td>@recipe.Description</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@recipe.Id" class="btn btn-warning">Edit</a>
+                    <button data-recipe-id="@recipe.Id" class="btn btn-danger delete-recipe">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/recipe.js"></script>
+}
+
